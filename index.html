@@ -165,13 +165,13 @@
     <script>
         // CONFIGURACIÓN DE EJERCICIOS (REEMPLAZA LOS IDs DE YOUTUBE)
         const ejercicios = [
-            { id: 1, nombre: "Sentadillas / Goblet Squat", videoUrl: "1.mp4" },
-            { id: 2, nombre: "Incline Push-up", videoUrl: "2.mp4" },
-            { id: 3, nombre: "Romanian Deadlift", videoUrl: "3.mp4" },
-            { id: 4, nombre: "Thruster", videoUrl: "4.mp4" }
+            { id: 1, nombre: "Sentadillas / Goblet Squat", videoUrl: "./media/1.mp4" },
+            { id: 2, nombre: "Incline Push-up", videoUrl: "./media/2.mp4" },
+            { id: 3, nombre: "Romanian Deadlift", videoUrl: "./media/3.mp4" },
+            { id: 4, nombre: "Thruster", videoUrl: "./media/4.mp4" }
         ];
 
-        const videoElongacionId = "dQw4w9WgXcQ"; 
+        const videoElongacionId = "IjH_8pdybfs"; 
 
         let currentRound = 1;
         let currentExerciseIdx = 0;
@@ -352,7 +352,7 @@
 
         function showStretching() {
             showScreen('stretching');
-            document.getElementById('stretch-video').src = `https://www.youtube.com/watch?v=IjH_8pdybfs${videoElongacionId}`;
+            document.getElementById('stretch-video').src = `https://www.youtube.com/embed/${videoElongacionId}?autoplay=1`;
         }
 
         function goToCardio() {
@@ -412,5 +412,4 @@
         }
     </script>
 </body>
-
 </html>
