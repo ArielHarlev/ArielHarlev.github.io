@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erica's Circuit Training</title>
+    <style>
+        :root {
+            --bg: #e0e0e0; 
+            --card-bg: #ffffff;
+            --primary: #003366; 
+            --accent: #CC0000; 
+            --success: #28a745;
+            --warning: #ffc107;
+            --text: #333333;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%; max-width: 600px;
+            background: var(--card-bg);
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        header {
+            background-color: var(--primary); color: white;
+            padding: 20px; text-align: center;
+            border-bottom: 4px solid var(--accent);
+        }
+        
+        h1 { margin: 0; font-size: 1.4rem; }
+        .zone-display { font-size: 0.9rem; margin-top: 5px; opacity: 0.9; }
+
+        .screen {
+            flex-grow: 1; display: flex; flex-direction: column;
+            align-items: center; padding: 20px; text-align: center;
+        }
+        .hidden { display: none !important; }
+
+        /* Gear & Visuals */
+        .gear-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin: 20px 0;
+        }
+        .gear-item {
+            background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px;
+            padding: 10px; display: flex; flex-direction: column; align-items: center;
+        }
+        .gear-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 5px; margin-bottom: 8px; }
+
+        .gif-frame {
+            width: 100%; height: 300px; background: #000;
+            border: 2px solid #ccc; margin: 20px 0;
+            display: flex; justify-content: center; align-items: center; overflow: hidden;
+        }
+        .gif-frame img { width: 100%; height: 100%; object-fit: contain; }
+
+        .execution-box {
+            background: #f9f9f9; border-left: 5px solid var(--primary);
+            padding: 15px; text-align: left; margin-bottom: 20px;
+            font-size: 0.95rem; line-height: 1.5; width: 100%; box-sizing: border-box;
+        }
+
+        /* Input Forms */
+        .feedback-overlay {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: rgba(255,255,255,0.98); z-index: 100;
+            display: flex; flex-direction: column; justify-content: center;
+            padding: 20px; box-sizing: border-box;
+        }
+        .input-group { margin-bottom: 20px; text-align: left; width: 100%; }
+        .input-label { display: block; font-weight: bold; margin-bottom: 8px; color: var(--primary); }
+        
+        .difficulty-btns { display: flex; gap: 5px; }
+        .diff-btn { flex: 1; padding: 10px; border: 1px solid #ccc; background: white; border-radius: 5px; cursor: pointer; }
+        .diff-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .pain-toggle { display: flex; gap: 10px; }
+        .pain-btn { flex: 1; padding: 15px; border: 2px solid #ccc; border-radius: 8px; background: white; font-weight: bold;}
+        .pain-btn.yes { border-color: var(--accent); color: var(--accent); }
+        .pain-btn.yes.selected { background: var(--accent); color: white; }
+        .pain-btn.no { border-color: var(--success); color: var(--success); }
+        .pain-btn.no.selected { background: var(--success); color: white; }
+
+        .num-input { width: 100%; padding: 15px; font-size: 1.5rem; text-align: center; border: 2px solid var(--primary); border-radius: 8px; }
+
+        /* Advice Box */
+        .advice-box {
+            padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; color: white; text-align: center;
+        }
+        .advice-up { background-color: var(--accent); } /* Too low, push harder */
+        .advice-ok { background-color: var(--success); } /* Good */
+        .advice-down { background-color: var(--warning); color: #333; } /* Too high */
+
+        /* Buttons */
+        .btn {
+            background-color: var(--primary); color: white; border: none; padding: 15px 20px;
+            font-size: 1rem; font-weight: bold; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px;
+        }
+        .btn-green { background-color: var(--success); }
+        .btn-email { background-color: #EA4335; }
+        .btn-ai { background-color: #4285F4; }
+        
+        .timer-display { font-size: 6rem; font-weight: bold; font-family: 'Courier New', monospace; margin: 10px 0; }
+        .status-badge { font-size: 2rem; font-weight: 900; text-transform: uppercase; padding: 5px 20px; border-radius: 50px; margin-bottom: 10px; }
+        .status-work { color: var(--accent); border: 3px solid var(--accent); }
+        .status-rest { color: var(--primary); border: 3px solid var(--primary); }
+        
+        /* Rest Visual */
+        .rest-preview { width: 200px; height: 200px; border-radius: 50%; border: 5px solid var(--primary); overflow: hidden; margin: 20px auto; background: #fff; display: flex; justify-content: center; align-items: center; }
+        .rest-preview img { width: 90%; height: 90%; object-fit: contain; }
+
+        /* Target Zone Indicator */
+        .target-zone-box {
+            background: #eee; padding: 10px; border-radius: 5px; margin-bottom: 10px;
+            border-left: 5px solid var(--accent); text-align: left; width: 100%; box-sizing: border-box;
+        }
+
+    </style>
+</head>
+<body>
+
+<audio id="gong" src="https://cdn.pixabay.com/audio/2024/09/13/audio_24e0573135.mp3"></audio>
+<audio id="beep" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+
+<div class="container">
+    <header>
+        <h1>Erica's Circuit Training</h1>
+        <div class="zone-display" id="header-zone">Configurando Zonas...</div>
+    </header>
+
+    <div id="screen-start" class="screen">
+        <div style="flex-grow:1; width:100%;">
+            <h2>Configuración Inicial</h2>
+            
+            <div class="input-group">
+                <label class="input-label">Edad de Erica (Años)</label>
+                <input type="number" id="input-age" class="num-input" placeholder="Ej: 35" value="40">
+                <p style="font-size:0.8rem; color:#666;">*Se usará para calcular las Zonas 3 y 4.</p>
+                <p style="font-size:0.8rem; color:#666;">*Resting HR fijado en 60 bpm.</p>
+            </div>
+
+            <h3>Material Necesario</h3>
+            <div class="gear-grid">
+                <div class="gear-item"><img src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?q=80&w=400" alt="KB"><span>Kettlebell</span></div>
+                <div class="gear-item"><img src="https://images.unsplash.com/photo-1638536532686-d610adfc8e5c?q=80&w=400" alt="DB"><span>Mancuernas</span></div>
+                <div class="gear-item"><img src="https://images.unsplash.com/photo-1598971639058-211a74a96ded?q=80&w=400" alt="Bench"><span>Banco</span></div>
+                <div class="gear-item"><img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=400" alt="Water"><span>Agua</span></div>
+            </div>
+        </div>
+        <button class="btn" onclick="calculateZonesAndStart()">Calcular Zonas y Comenzar</button>
+    </div>
+
+    <div id="screen-briefing" class="screen hidden">
+        <h2 id="br-title">Ejercicio</h2>
+        <div class="gif-frame"><img id="br-img" src=""></div>
+        <div class="execution-box"><strong>Ejecución:</strong><p id="br-text" style="margin-top:5px;"></p></div>
+        <button class="btn" onclick="nextBriefing()">Siguiente</button>
+    </div>
+
+    <div id="screen-workout" class="screen hidden">
+        <div id="status-badge" class="status-badge status-rest">LISTA</div>
+        
+        <div id="rest-view" class="hidden">
+            <div class="rest-preview"><img id="rest-img" src=""></div>
+            <p style="font-size:1.2rem; color:#666;">PRÓXIMO:</p>
+            <h2 id="rest-next-name" style="margin:0;">Siguiente Ejercicio</h2>
+        </div>
+
+        <div id="work-view" class="hidden" style="flex-grow:1; display:flex; flex-direction:column; justify-content:center;">
+            <h2 id="work-name" style="font-size:2rem; margin:0;">EJERCICIO</h2>
+            
+            <div style="margin-top:20px; padding:15px; background:#fff; border:2px solid var(--accent); border-radius:10px;">
+                <p style="margin:0; font-weight:bold; color:#666;">OBJETIVO (ZONA 3-4)</p>
+                <p id="target-bpm-display" style="margin:5px 0 0 0; font-size:2.5rem; font-weight:bold; color:var(--primary);">---</p>
+                <p style="margin:0; font-size:0.8rem;">Mantener Ritmo</p>
+            </div>
+        </div>
+
+        <div class="timer-display" id="timer">00:00</div>
+    </div>
+
+    <div id="screen-feedback" class="feedback-overlay hidden">
+        <h2>Registro de Ronda</h2>
+        <h3 id="fb-ex-name" style="color:#666; margin-top:0;">Goblet Squat</h3>
+        
+        <div class="target-zone-box">
+            <span>🎯 <strong>Objetivo:</strong> <span id="fb-target-txt">140-160</span> BPM</span>
+        </div>
+
+        <div id="advice-container" class="hidden advice-box">
+            </div>
+
+        <div class="input-group">
+            <label class="input-label">Frecuencia Cardíaca (BPM)</label>
+            <input type="number" id="input-hr" class="num-input" placeholder="Ej: 150" oninput="checkZoneRealTime()">
+        </div>
+
+        <div class="input-group">
+            <label class="input-label">Esfuerzo Percibido (RPE)</label>
+            <div class="difficulty-btns" id="diff-container">
+                <button class="diff-btn" onclick="selectDiff(this, 'Fácil')">Fácil</button>
+                <button class="diff-btn" onclick="selectDiff(this, 'Medio')">Medio</button>
+                <button class="diff-btn" onclick="selectDiff(this, 'Duro')">Duro</button>
+                <button class="diff-btn" onclick="selectDiff(this, 'Fallo')">Fallo</button>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label class="input-label">¿Dolor?</label>
+            <div class="pain-toggle">
+                <button class="pain-btn no selected" id="pain-no" onclick="selectPain(false)">NO</button>
+                <button class="pain-btn yes" id="pain-yes" onclick="selectPain(true)">SÍ</button>
+            </div>
+        </div>
+        
+        <button class="btn" onclick="submitFeedback()">Guardar y Descansar</button>
+    </div>
+
+    <div id="screen-cooldown" class="screen hidden">
+        <h1 style="color:var(--success);">VUELTA A LA CALMA</h1>
+        <p>Caminar despacio y respirar profundo.</p>
+        <div class="timer-display" id="cd-timer">05:00</div>
+    </div>
+
+    <div id="screen-final" class="screen hidden">
+        <h2>Sesión Completa</h2>
+        <div class="input-group">
+            <label class="input-label">HR Final (Recuperación 5 min)</label>
+            <input type="number" id="input-hr-final" class="num-input" placeholder="Ej: 90">
+        </div>
+        
+        <p style="font-size:0.9rem; color:#666; margin: 20px 0;">Guardar datos:</p>
+
+        <button class="btn btn-email" onclick="sendEmail()">📧 Enviar a ArielHarlev@Gmail</button>
+        <button class="btn btn-ai" onclick="copyForAI()">📋 Copiar para Análisis IA</button>
+        <button class="btn btn-green" onclick="generateExcel()">📊 Descargar Excel</button>
+        
+        <p id="copy-status" style="color:var(--success); font-weight:bold; opacity:0; transition:opacity 0.5s;">¡Copiado! Pega en el chat.</p>
+    </div>
+</div>
+
+<script>
+    const exercises = [
+        { name: "KB Goblet Squat", src: "https://media.tenor.com/2X_5s8_89w4AAAAC/goblet-squat.gif", text: "Sostener KB por los cuernos. Sentadilla profunda." },
+        { name: "Incline Push-Up", src: "https://media.tenor.com/tHqFfOD8zmsAAAAC/push-ups-incline-push-ups.gif", text: "Manos en banco. Cuerpo recto. Pecho al borde." },
+        { name: "Romanian Deadlift", src: "https://media.tenor.com/28g3CthhWwIAAAAd/dumbbell-romanian-deadlift-dumbbell-deadlift.gif", text: "Bisagra de cadera. Espalda plana. DB a espinillas." },
+        { name: "Dumbbell Row", src: "https://media.tenor.com/W29gO6W1CMAAAAAC/dumbbell-row-one-arm-dumbbell-row.gif", text: "Mano en banco. Tracción al bolsillo. No girar tronco." }
+    ];
+
+    const TIME_WORK = 30;
+    const TIME_REST = 30;
+    const TIME_COOLDOWN = 300; 
+    const RESTING_HR = 60; // Fixed as requested
+
+    let idx = 0;
+    let timer = null;
+    let timeLeft = 0;
+    let workoutLog = [];
+    let tempDiff = "";
+    let tempPain = false;
+    
+    // Heart Rate Zones
+    let targetMin = 0;
+    let targetMax = 0;
+
+    const gong = document.getElementById('gong');
+    const beep = document.getElementById('beep');
+    function playGong() { gong.play().catch(e=>{}); }
+    function playBeep() { beep.play().catch(e=>{}); }
+
+    // --- SETUP & CALCULATION ---
+    function calculateZonesAndStart() {
+        const age = parseInt(document.getElementById('input-age').value) || 30;
+        const maxHR = 220 - age;
+        const hrr = maxHR - RESTING_HR; // Heart Rate Reserve
+
+        // Zone 3 starts at 70% intensity
+        // Zone 4 ends at 90% intensity
+        // Karvonen: (HRR * %) + RestingHR
+        targetMin = Math.round((hrr * 0.70) + RESTING_HR);
+        targetMax = Math.round((hrr * 0.90) + RESTING_HR);
+
+        document.getElementById('header-zone').innerText = `Zona 3-4 Objetivo: ${targetMin} - ${targetMax} BPM`;
+        document.getElementById('target-bpm-display').innerText = `${targetMin} - ${targetMax}`;
+        document.getElementById('fb-target-txt').innerText = `${targetMin}-${targetMax}`;
+
+        startBriefing();
+    }
+
+    function startBriefing() {
+        beep.volume=0; beep.play().then(()=>beep.volume=1).catch(e=>{});
+        document.getElementById('screen-start').classList.add('hidden');
+        document.getElementById('screen-briefing').classList.remove('hidden');
+        loadBriefing(0);
+    }
+    function loadBriefing(i) {
+        document.getElementById('br-title').innerText = exercises[i].name;
+        document.getElementById('br-img').src = exercises[i].src;
+        document.getElementById('br-text').innerText = exercises[i].text;
+    }
+    function nextBriefing() {
+        idx++;
+        if(idx < exercises.length) loadBriefing(idx);
+        else startWorkout();
+    }
+
+    function startWorkout() {
+        document.getElementById('screen-briefing').classList.add('hidden');
+        document.getElementById('screen-workout').classList.remove('hidden');
+        idx = 0; workoutLog = [];
+        runRest(true);
+    }
+
+    function runRest(isFirst) {
+        timeLeft = TIME_REST;
+        const ex = exercises[idx];
+        document.getElementById('status-badge').innerText = isFirst ? "PREPARADA" : "DESCANSO";
+        document.getElementById('status-badge').className = "status-badge status-rest";
+        document.getElementById('work-view').classList.add('hidden');
+        document.getElementById('rest-view').classList.remove('hidden');
+        document.getElementById('rest-next-name').innerText = ex.name;
+        document.getElementById('rest-img').src = ex.src;
+        startTimer(() => runWork());
+    }
+
+    function runWork() {
+        timeLeft = TIME_WORK;
+        playGong();
+        document.getElementById('status-badge').innerText = "TRABAJO";
+        document.getElementById('status-badge').className = "status-badge status-work";
+        document.getElementById('rest-view').classList.add('hidden');
+        document.getElementById('work-view').classList.remove('hidden');
+        document.getElementById('work-name').innerText = exercises[idx].name;
+        startTimer(() => openFeedback());
+    }
+
+    function openFeedback() {
+        playBeep();
+        tempDiff = ""; tempPain = false;
+        document.getElementById('input-hr').value = "";
+        document.getElementById('advice-container').classList.add('hidden'); // Hide advice initially
+        document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+        selectPain(false);
+        document.getElementById('fb-ex-name').innerText = exercises[idx].name;
+        document.getElementById('screen-feedback').classList.remove('hidden');
+    }
+
+    // --- REAL TIME COACHING LOGIC ---
+    function checkZoneRealTime() {
+        const val = parseInt(document.getElementById('input-hr').value);
+        const box = document.getElementById('advice-container');
+        
+        if (!val) {
+            box.classList.add('hidden');
+            return;
+        }
+
+        box.classList.remove('hidden');
+        box.className = "advice-box"; // reset classes
+
+        if (val < targetMin) {
+            box.innerText = "📉 Intensidad Baja: ¡Aumenta peso o velocidad!";
+            box.classList.add('advice-up');
+        } else if (val > targetMax) {
+            box.innerText = "📈 Muy Alta: Controla un poco el ritmo.";
+            box.classList.add('advice-down');
+        } else {
+            box.innerText = "✅ ¡Perfecto! Estás en la Zona Objetivo.";
+            box.classList.add('advice-ok');
+        }
+    }
+
+    function selectDiff(btn, val) {
+        tempDiff = val;
+        document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+    }
+
+    function selectPain(isPain) {
+        tempPain = isPain;
+        if(isPain) {
+            document.getElementById('pain-yes').classList.add('selected');
+            document.getElementById('pain-no').classList.remove('selected');
+        } else {
+            document.getElementById('pain-no').classList.add('selected');
+            document.getElementById('pain-yes').classList.remove('selected');
+        }
+    }
+
+    function submitFeedback() {
+        const hr = document.getElementById('input-hr').value || "0";
+        if(tempDiff === "") { alert("Selecciona Dificultad"); return; }
+        
+        // Save Intensity Feedback based on HR
+        let intensityCheck = "En Zona";
+        if(parseInt(hr) < targetMin) intensityCheck = "Baja";
+        if(parseInt(hr) > targetMax) intensityCheck = "Alta";
+
+        workoutLog.push({ 
+            exercise: exercises[idx].name, 
+            difficulty: tempDiff, 
+            pain: tempPain ? "SÍ" : "NO", 
+            hr: hr,
+            zoneStatus: intensityCheck
+        });
+
+        document.getElementById('screen-feedback').classList.add('hidden');
+        idx++;
+        if(idx < exercises.length) runRest(false);
+        else startCoolDown();
+    }
+
+    function startCoolDown() {
+        document.getElementById('screen-workout').classList.add('hidden');
+        document.getElementById('screen-cooldown').classList.remove('hidden');
+        timeLeft = TIME_COOLDOWN;
+        clearInterval(timer);
+        timer = setInterval(() => {
+            timeLeft--;
+            let m = Math.floor(timeLeft / 60).toString().padStart(2,'0');
+            let s = (timeLeft % 60).toString().padStart(2,'0');
+            document.getElementById('cd-timer').innerText = `${m}:${s}`;
+            if(timeLeft <= 0) { clearInterval(timer); playBeep(); showFinalScreen(); }
+        }, 1000);
+    }
+
+    function showFinalScreen() {
+        document.getElementById('screen-cooldown').classList.add('hidden');
+        document.getElementById('screen-final').classList.remove('hidden');
+    }
+
+    function startTimer(onComplete) {
+        clearInterval(timer);
+        updateTimerUI();
+        timer = setInterval(() => {
+            timeLeft--;
+            updateTimerUI();
+            if(timeLeft <= 3 && timeLeft > 0) playBeep();
+            if(timeLeft <= 0) { clearInterval(timer); onComplete(); }
+        }, 1000);
+    }
+    function updateTimerUI() {
+        let m = Math.floor(timeLeft / 60).toString().padStart(2,'0');
+        let s = (timeLeft % 60).toString().padStart(2,'0');
+        document.getElementById('timer').innerText = `${m}:${s}`;
+    }
+
+    // --- EXPORT FUNCTIONS ---
+    function formatDataForText() {
+        const finalHR = document.getElementById('input-hr-final').value || "N/A";
+        let date = new Date().toLocaleDateString();
+        let txt = `REPORTE ERICA - ${date}\n`;
+        txt += `Target Zone: ${targetMin}-${targetMax} BPM (RHR: ${RESTING_HR})\n\n`;
+        
+        workoutLog.forEach(row => {
+            txt += `ESTACIÓN: ${row.exercise}\n`;
+            txt += `- Dificultad: ${row.difficulty}\n`;
+            txt += `- Dolor: ${row.pain}\n`;
+            txt += `- HR Final: ${row.hr} bpm (${row.zoneStatus})\n\n`;
+        });
+        txt += `\nHR RECUPERACIÓN (5min): ${finalHR} bpm`;
+        return txt;
+    }
+
+    function sendEmail() {
+        let body = encodeURIComponent(formatDataForText());
+        let subject = encodeURIComponent("Datos Entrenamiento Erica");
+        window.location.href = `mailto:arielharlev@gmail.com?subject=${subject}&body=${body}`;
+    }
+
+    function copyForAI() {
+        let data = formatDataForText();
+        data += "\n\n[INSTRUCCIÓN PARA IA: Analiza científicamente. Evalúa recuperación, desacople RPE vs HR y cumplimiento de Zona 3-4.]";
+        
+        navigator.clipboard.writeText(data).then(() => {
+            const status = document.getElementById('copy-status');
+            status.style.opacity = 1;
+            setTimeout(() => status.style.opacity = 0, 3000);
+        });
+    }
+
+    function generateExcel() {
+        const finalHR = document.getElementById('input-hr-final').value || "N/A";
+        let csv = "data:text/csv;charset=utf-8,Ejercicio,Dificultad,Dolor,HR_Final,Status_Zona\n";
+        workoutLog.forEach(row => { csv += `${row.exercise},${row.difficulty},${row.pain},${row.hr},${row.zoneStatus}\n`; });
+        csv += `COOL DOWN (5 MIN),-,-,${finalHR},-\n`;
+        csv += `TARGET ZONE,-,-,${targetMin}-${targetMax},-\n`;
+        
+        const link = document.createElement("a");
+        link.setAttribute("href", encodeURI(csv));
+        link.setAttribute("download", "erica_datos_entreno.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+</body>
+</html>

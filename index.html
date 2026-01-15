@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrenamiento Pro - Circuito y Cardio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .timer-circle { transition: stroke-dashoffset 0.1s linear; }
+        .card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="app" class="w-full max-w-2xl card rounded-3xl p-6 md:p-8 shadow-2xl">
+        <!-- Pantalla de Inicio -->
+        <div id="screen-start" class="text-center">
+            <h1 class="text-3xl font-bold mb-4 text-blue-400">Entrenamiento Integral</h1>
+            <p class="mb-6 text-slate-400">2 Rondas • 4 Ejercicios • Elongación • Cardio Final</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-left text-sm">
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                    <p class="font-bold text-blue-300 mb-2 uppercase tracking-tight text-xs">Elementos Necesarios:</p>
+                    <ul class="space-y-1 text-slate-300">
+                        <li class="flex items-center gap-2"><span>💪</span> Mancuernas</li>
+                        <li class="flex items-center gap-2"><span>🪑</span> Banco</li>
+                        <li class="flex items-center gap-2"><span>💧</span> Agua</li>
+                        <li class="flex items-center gap-2"><span>🔔</span> Kettlebell</li>
+                        <li class="flex items-center gap-2"><span>🏃</span> Treadmill (Cinta)</li>
+                    </ul>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                    <p class="font-bold text-blue-300 mb-2 uppercase tracking-tight text-xs">Estructura:</p>
+                    <ul class="space-y-1 text-slate-300">
+                        <li>⏱️ 30s Preparación</li>
+                        <li>🔥 20s Ejercicio</li>
+                        <li>📝 Registro post-esfuerzo</li>
+                        <li>🚴 15 min Cardio (Z3-Z4)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <button onclick="startTraining()" class="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold text-xl transition-all shadow-lg shadow-blue-900/20">
+                EMPEZAR RUTINA
+            </button>
+        </div>
+
+        <!-- Pantalla de Cronómetro / Ejercicio -->
+        <div id="screen-timer" class="hidden text-center">
+            <div class="flex justify-between items-center mb-6">
+                <span id="round-indicator" class="px-3 py-1 bg-blue-900/50 text-blue-300 rounded-full text-xs font-bold uppercase tracking-widest">Ronda 1</span>
+                <span id="exercise-name" class="text-xl font-semibold">Ejercicio 1</span>
+            </div>
+
+            <!-- Video Placeholder -->
+            <div id="video-container" class="aspect-video bg-black rounded-2xl mb-6 overflow-hidden flex items-center justify-center border border-slate-700">
+                <p class="text-slate-500 text-sm p-4 text-center italic">Cargando reproductor...</p>
+            </div>
+
+            <div class="relative flex items-center justify-center mb-6">
+                <svg class="w-40 h-40 transform -rotate-90">
+                    <circle cx="80" cy="80" r="70" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-800" />
+                    <circle id="timer-progress" cx="80" cy="80" r="70" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="440" stroke-dashoffset="0" class="text-blue-500 timer-circle" />
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span id="timer-label" class="text-xs uppercase text-slate-400 tracking-widest mb-1">Preparación</span>
+                    <span id="timer-seconds" class="text-5xl font-bold">30</span>
+                </div>
+            </div>
+
+            <p id="next-instruction" class="text-slate-400 italic text-sm">Prepárate para comenzar...</p>
+        </div>
+
+        <!-- Pantalla de Feedback (Preguntas) -->
+        <div id="screen-feedback" class="hidden">
+            <h2 class="text-2xl font-bold mb-6 text-center">Registro de Esfuerzo</h2>
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm text-slate-400 mb-2">Frecuencia Cardíaca (BPM)</label>
+                    <input type="number" id="input-hr" placeholder="Ej: 145" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm text-slate-400 mb-2">Nivel de Dificultad (1-10)</label>
+                    <input type="range" id="input-difficulty" min="1" max="10" class="w-full accent-blue-500">
+                    <div class="flex justify-between text-xs text-slate-500 px-1 mt-1">
+                        <span>Fácil</span><span>Medio</span><span>Extremo</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm text-slate-400 mb-2">Notas / Sensaciones</label>
+                    <textarea id="input-notes" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="¿Cómo te sentiste?"></textarea>
+                </div>
+                <button onclick="saveFeedback()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-bold transition-all">
+                    SIGUIENTE PASO
+                </button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Elongación -->
+        <div id="screen-stretching" class="hidden text-center">
+            <h2 class="text-2xl font-bold mb-4">Fase de Elongación</h2>
+            <p class="text-slate-400 mb-6 text-sm">Tómate tu tiempo para recuperar.</p>
+            <div class="aspect-video bg-black rounded-2xl mb-8 overflow-hidden">
+                <iframe id="stretch-video" class="w-full h-full" src="" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <button onclick="goToCardio()" class="w-full py-4 bg-orange-600 hover:bg-orange-500 rounded-2xl font-bold transition-all">
+                IR A CARDIO FINAL (15 MIN)
+            </button>
+        </div>
+
+        <!-- Pantalla de Cardio (Treadmill) -->
+        <div id="screen-cardio" class="hidden text-center">
+            <h2 class="text-2xl font-bold mb-2">Cardio: Zonas 3-4</h2>
+            <div class="flex justify-center gap-4 mb-4">
+                <div class="px-3 py-1 bg-orange-900/30 text-orange-400 rounded-lg text-xs font-bold border border-orange-800/50">Intervalos 30s</div>
+                <div id="cardio-zone-indicator" class="px-3 py-1 bg-red-900/30 text-red-400 rounded-lg text-xs font-bold border border-red-800/50">Zona 4</div>
+            </div>
+
+            <div class="bg-slate-800/50 p-6 rounded-3xl mb-6 border border-slate-700">
+                <div class="text-7xl font-mono font-bold text-blue-400 mb-2" id="cardio-timer">15:00</div>
+                <p id="cardio-instruction" class="text-lg font-semibold text-white">¡Inicia en Zona 3!</p>
+                <p class="text-sm text-slate-400 mt-2 italic">Ajusta velocidad o inclinación para controlar pulso</p>
+            </div>
+
+            <div id="cardio-progress-container" class="w-full h-3 bg-slate-700 rounded-full mb-8 overflow-hidden">
+                <div id="cardio-progress-bar" class="h-full bg-blue-500 transition-all duration-1000" style="width: 0%"></div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 text-left">
+                <div class="p-3 bg-slate-800 rounded-xl border border-slate-700">
+                    <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Estrategia</p>
+                    <p class="text-xs text-slate-300">Sube inclinación si la velocidad es muy alta.</p>
+                </div>
+                <div class="p-3 bg-slate-800 rounded-xl border border-slate-700">
+                    <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Próximo</p>
+                    <p id="cardio-next" class="text-xs text-slate-300">Mantener Zona</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Finalización y Envío por WhatsApp -->
+        <div id="screen-finish" class="hidden text-center">
+            <h2 class="text-2xl font-bold mb-4 text-emerald-400">✅ ¡ENTRENAMIENTO COMPLETADO!</h2>
+            <p class="text-slate-400 mb-6">Presiona el botón para enviar el reporte por WhatsApp</p>
+            
+            <div id="summary-data" class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 mb-6 text-left text-sm space-y-2">
+                <p><span class="text-slate-500">Fecha:</span> <span id="summary-date" class="font-semibold"></span></p>
+                <p><span class="text-slate-500">Ejercicios completados:</span> <span id="summary-exercises" class="font-semibold text-blue-400">8</span></p>
+                <p><span class="text-slate-500">Puntuación promedio:</span> <span id="summary-avg-difficulty" class="font-semibold text-orange-400">7.5/10</span></p>
+                <p><span class="text-slate-500">HR promedio:</span> <span id="summary-avg-hr" class="font-semibold text-red-400">145 BPM</span></p>
+            </div>
+
+            <button onclick="sendViaWhatsApp()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-bold text-xl transition-all shadow-lg shadow-emerald-900/20 mb-3 flex items-center justify-center gap-2">
+                📱 ENVIAR POR WHATSAPP
+            </button>
+            
+            <button onclick="downloadReport()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-2xl font-semibold transition-all">
+                📄 DESCARGAR REPORTE
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN DE EJERCICIOS (REEMPLAZA LOS IDs DE YOUTUBE)
+        const ejercicios = [
+            { id: 1, nombre: "Sentadillas / Goblet Squat", videoUrl: "./media/1.mp4" },
+            { id: 2, nombre: "Incline Push-up", videoUrl: "./media/2.mp4" },
+            { id: 3, nombre: "Romanian Deadlift", videoUrl: "./media/3.mp4" },
+            { id: 4, nombre: "Thruster", videoUrl: "./media/4.mp4" }
+        ];
+
+        const videoElongacionId = "dQw4w9WgXcQ"; 
+
+        let currentRound = 1;
+        let currentExerciseIdx = 0;
+        let timerInterval;
+        let cardioInterval;
+        let cardioTimeLeft = 15 * 60;
+        let sessionData = [];
+        let phoneNumber = ""; // Se solicitará al usuario
+
+        // Función para generar un sonido de alerta
+        function playBeep() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                oscillator.connect(gain);
+                gain.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 1000; // Frecuencia en Hz
+                oscillator.type = 'sine';
+                
+                gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            } catch (e) {
+                console.log('Audio no disponible');
+            }
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('#app > div').forEach(div => div.classList.add('hidden'));
+            document.getElementById(`screen-${screenId}`).classList.remove('hidden');
+        }
+
+        function startTraining() {
+            currentRound = 1;
+            currentExerciseIdx = 0;
+            runExerciseCycle();
+        }
+
+        function runExerciseCycle() {
+            showScreen('timer');
+            const exercise = ejercicios[currentExerciseIdx];
+            document.getElementById('exercise-name').innerText = exercise.nombre;
+            document.getElementById('round-indicator').innerText = `Ronda ${currentRound}`;
+            
+            // Detectar si es un archivo local o YouTube
+            if (exercise.videoUrl.includes('.mp4') || exercise.videoUrl.includes('.webm')) {
+                // Video local
+                document.getElementById('video-container').innerHTML = `<video class="w-full h-full" autoplay muted loop playsinline><source src="${exercise.videoUrl}" type="video/mp4">Tu navegador no soporta video</video>`;
+            } else {
+                // YouTube
+                document.getElementById('video-container').innerHTML = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${exercise.videoUrl}?autoplay=1&mute=1" frameborder="0" allowfullscreen></iframe>`;
+            }
+            
+            startTimer(30, "Preparación", () => {
+                startTimer(20, "¡EJERCICIO!", () => {
+                    showScreen('feedback');
+                });
+            });
+        }
+
+        function startTimer(seconds, label, onComplete) {
+            let timeLeft = seconds;
+            const labelEl = document.getElementById('timer-label');
+            const secondsEl = document.getElementById('timer-seconds');
+            const progressEl = document.getElementById('timer-progress');
+            const circumference = 440;
+
+            labelEl.innerText = label;
+            labelEl.className = label === "¡EJERCICIO!" ? "text-xs uppercase text-orange-400 animate-pulse font-bold" : "text-xs uppercase text-slate-400 tracking-widest";
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                secondsEl.innerText = timeLeft;
+                const offset = circumference - (timeLeft / seconds) * circumference;
+                progressEl.style.strokeDashoffset = offset;
+
+                // Reproducir sonido en los últimos 5 segundos (5,4,3,2,1)
+                if (timeLeft >= 1 && timeLeft <= 5) {
+                    playBeep();
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    onComplete();
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        function saveFeedback() {
+            const data = {
+                ronda: currentRound,
+                ejercicio: ejercicios[currentExerciseIdx].nombre,
+                hr: document.getElementById('input-hr').value,
+                difficulty: document.getElementById('input-difficulty').value,
+                notes: document.getElementById('input-notes').value
+            };
+            
+            // Guardar en array de sesión
+            sessionData.push(data);
+            console.log("Dato guardado:", data);
+
+            // Limpiar inputs
+            document.getElementById('input-hr').value = '';
+            document.getElementById('input-notes').value = '';
+
+            currentExerciseIdx++;
+            if (currentExerciseIdx >= ejercicios.length) {
+                if (currentRound < 2) {
+                    currentRound++;
+                    currentExerciseIdx = 0;
+                    runExerciseCycle();
+                } else {
+                    showStretching();
+                }
+            } else {
+                runExerciseCycle();
+            }
+        }
+
+        function showFinishScreen() {
+            showScreen('finish');
+            
+            // Calcular estadísticas
+            const avgDifficulty = (sessionData.reduce((a, b) => a + parseInt(b.difficulty), 0) / sessionData.length).toFixed(1);
+            const avgHR = Math.round(sessionData.reduce((a, b) => a + parseInt(b.hr || 0), 0) / sessionData.filter(d => d.hr).length);
+            
+            document.getElementById('summary-date').innerText = new Date().toLocaleDateString('es-AR');
+            document.getElementById('summary-exercises').innerText = sessionData.length;
+            document.getElementById('summary-avg-difficulty').innerText = `${avgDifficulty}/10`;
+            document.getElementById('summary-avg-hr').innerText = `${avgHR} BPM`;
+        }
+
+        function sendViaWhatsApp() {
+            phoneNumber = "17133844263"; // Número del terapeuta
+
+            // Crear mensaje con datos del entrenamiento
+            let mensaje = `📋 *REPORTE DE ENTRENAMIENTO*\n\n`;
+            mensaje += `📅 Fecha: ${new Date().toLocaleDateString('es-AR')}\n`;
+            mensaje += `⏰ Hora: ${new Date().toLocaleTimeString('es-AR')}\n\n`;
+            mensaje += `*RESUMEN:*\n`;
+            mensaje += `✅ Ejercicios completados: ${sessionData.length}\n`;
+            mensaje += `💪 Dificultad promedio: ${(sessionData.reduce((a, b) => a + parseInt(b.difficulty), 0) / sessionData.length).toFixed(1)}/10\n`;
+            mensaje += `❤️ HR promedio: ${Math.round(sessionData.reduce((a, b) => a + parseInt(b.hr || 0), 0) / sessionData.filter(d => d.hr).length)} BPM\n\n`;
+            
+            mensaje += `*DETALLE POR EJERCICIO:*\n`;
+            sessionData.forEach((item, idx) => {
+                mensaje += `${idx + 1}. ${item.ejercicio} (Ronda ${item.ronda})\n`;
+                mensaje += `   • HR: ${item.hr || 'No registrado'} BPM\n`;
+                mensaje += `   • Dificultad: ${item.difficulty}/10\n`;
+                if (item.notes) mensaje += `   • Nota: ${item.notes}\n`;
+            });
+            
+            mensaje += `\n📱 Enviado desde ClinicFit`;
+
+            // Crear enlace de WhatsApp
+            const urlWhatsApp = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensaje)}`;
+            window.open(urlWhatsApp, '_blank');
+        }
+
+        function downloadReport() {
+            let csv = "Ronda,Ejercicio,HR,Dificultad,Notas\n";
+            sessionData.forEach(item => {
+                csv += `${item.ronda},"${item.ejercicio}",${item.hr},${item.difficulty},"${item.notes}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `Entrenamiento_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        function showStretching() {
+            showScreen('stretching');
+            document.getElementById('stretch-video').src = `https://www.youtube.com/watch?v=IjH_8pdybfs${videoElongacionId}`;
+        }
+
+        function goToCardio() {
+            showScreen('cardio');
+            startCardioTimer();
+        }
+
+        function startCardioTimer() {
+            const timerEl = document.getElementById('cardio-timer');
+            const instructionEl = document.getElementById('cardio-instruction');
+            const zoneInd = document.getElementById('cardio-zone-indicator');
+            const progressEl = document.getElementById('cardio-progress-bar');
+            
+            const totalDuration = 15 * 60;
+            const coolDownStart = 5 * 60; 
+
+            clearInterval(cardioInterval);
+            cardioInterval = setInterval(() => {
+                const minutes = Math.floor(cardioTimeLeft / 60);
+                const seconds = cardioTimeLeft % 60;
+                timerEl.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                const progress = ((totalDuration - cardioTimeLeft) / totalDuration) * 100;
+                progressEl.style.width = `${progress}%`;
+
+                if (cardioTimeLeft <= coolDownStart) {
+                    instructionEl.innerText = "COOL DOWN: Baja a Zona 2";
+                    zoneInd.innerText = "ZONA 2";
+                    zoneInd.className = "px-3 py-1 bg-emerald-900/30 text-emerald-400 rounded-lg text-xs font-bold border border-emerald-800/50";
+                } else {
+                    // Ciclo de 1.5 min para lograr 60% Z3 (2 periodos Z3 de 30s, 1 periodo Z4 de 30s)
+                    const cycle = Math.floor(cardioTimeLeft / 30) % 3; 
+                    
+                    if (cycle === 0) { 
+                        instructionEl.innerText = "INTENSIDAD ALTA: Zona 4";
+                        zoneInd.innerText = "ZONA 4";
+                        zoneInd.className = "px-3 py-1 bg-red-900/30 text-red-400 rounded-lg text-xs font-bold border border-red-800/50";
+                    } else {
+                        instructionEl.innerText = "ESTABLE: Zona 3";
+                        zoneInd.innerText = "ZONA 3";
+                        zoneInd.className = "px-3 py-1 bg-orange-900/30 text-orange-400 rounded-lg text-xs font-bold border border-orange-800/50";
+                    }
+                }
+
+                if (cardioTimeLeft <= 0) {
+                    clearInterval(cardioInterval);
+                    timerEl.innerText = "FIN";
+                    instructionEl.innerText = "¡Excelente trabajo!";
+                    
+                    // Mostrar pantalla de finalización después de 2 segundos
+                    setTimeout(() => {
+                        showFinishScreen();
+                    }, 2000);
+                }
+                cardioTimeLeft--;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
