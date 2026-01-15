@@ -15,48 +15,48 @@
 <body class="min-h-screen flex items-center justify-center p-4">
 
     <div id="app" class="w-full max-w-2xl card rounded-3xl p-6 md:p-8 shadow-2xl">
-        <!-- Pantalla de Inicio -->
+        <!-- Start Screen -->
         <div id="screen-start" class="text-center">
-            <h1 class="text-3xl font-bold mb-4 text-blue-400">Entrenamiento Integral</h1>
-            <p class="mb-6 text-slate-400">2 Rondas • 4 Ejercicios • Elongación • Cardio Final</p>
+            <h1 class="text-3xl font-bold mb-4 text-blue-400">Integral Training</h1>
+            <p class="mb-6 text-slate-400">2 Rounds • 4 Exercises • Stretching • Final Cardio</p>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-left text-sm">
                 <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-                    <p class="font-bold text-blue-300 mb-2 uppercase tracking-tight text-xs">Elementos Necesarios:</p>
+                    <p class="font-bold text-blue-300 mb-2 uppercase tracking-tight text-xs">Required Equipment:</p>
                     <ul class="space-y-1 text-slate-300">
-                        <li class="flex items-center gap-2"><span>💪</span> Mancuernas</li>
-                        <li class="flex items-center gap-2"><span>🪑</span> Banco</li>
-                        <li class="flex items-center gap-2"><span>💧</span> Agua</li>
+                        <li class="flex items-center gap-2"><span>💪</span> Dumbbells</li>
+                        <li class="flex items-center gap-2"><span>🪑</span> Bench</li>
+                        <li class="flex items-center gap-2"><span>💧</span> Water</li>
                         <li class="flex items-center gap-2"><span>🔔</span> Kettlebell</li>
-                        <li class="flex items-center gap-2"><span>🏃</span> Treadmill (Cinta)</li>
+                        <li class="flex items-center gap-2"><span>🏃</span> Treadmill</li>
                     </ul>
                 </div>
                 <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-                    <p class="font-bold text-blue-300 mb-2 uppercase tracking-tight text-xs">Estructura:</p>
+                    <p class="font-bold text-blue-300 mb-2 uppercase tracking-tight text-xs">Structure:</p>
                     <ul class="space-y-1 text-slate-300">
-                        <li>⏱️ 30s Preparación</li>
-                        <li>🔥 20s Ejercicio</li>
-                        <li>📝 Registro post-esfuerzo</li>
+                        <li>⏱️ 30s Preparation</li>
+                        <li>🔥 20s Exercise</li>
+                        <li>📝 Post-effort feedback</li>
                         <li>🚴 15 min Cardio (Z3-Z4)</li>
                     </ul>
                 </div>
             </div>
 
             <button onclick="startTraining()" class="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold text-xl transition-all shadow-lg shadow-blue-900/20">
-                EMPEZAR RUTINA
+                START TRAINING
             </button>
         </div>
 
-        <!-- Pantalla de Cronómetro / Ejercicio -->
+        <!-- Timer / Exercise Screen -->
         <div id="screen-timer" class="hidden text-center">
             <div class="flex justify-between items-center mb-6">
-                <span id="round-indicator" class="px-3 py-1 bg-blue-900/50 text-blue-300 rounded-full text-xs font-bold uppercase tracking-widest">Ronda 1</span>
-                <span id="exercise-name" class="text-xl font-semibold">Ejercicio 1</span>
+                <span id="round-indicator" class="px-3 py-1 bg-blue-900/50 text-blue-300 rounded-full text-xs font-bold uppercase tracking-widest">Round 1</span>
+                <span id="exercise-name" class="text-xl font-semibold">Exercise 1</span>
             </div>
 
             <!-- Video Placeholder -->
             <div id="video-container" class="aspect-video bg-black rounded-2xl mb-6 overflow-hidden flex items-center justify-center border border-slate-700">
-                <p class="text-slate-500 text-sm p-4 text-center italic">Cargando reproductor...</p>
+                <p class="text-slate-500 text-sm p-4 text-center italic">Loading player...</p>
             </div>
 
             <div class="relative flex items-center justify-center mb-6">
@@ -65,63 +65,63 @@
                     <circle id="timer-progress" cx="80" cy="80" r="70" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="440" stroke-dashoffset="0" class="text-blue-500 timer-circle" />
                 </svg>
                 <div class="absolute inset-0 flex flex-col items-center justify-center">
-                    <span id="timer-label" class="text-xs uppercase text-slate-400 tracking-widest mb-1">Preparación</span>
+                    <span id="timer-label" class="text-xs uppercase text-slate-400 tracking-widest mb-1">Preparation</span>
                     <span id="timer-seconds" class="text-5xl font-bold">30</span>
                 </div>
             </div>
 
-            <p id="next-instruction" class="text-slate-400 italic text-sm">Prepárate para comenzar...</p>
+            <p id="next-instruction" class="text-slate-400 italic text-sm">Get ready to begin...</p>
         </div>
 
-        <!-- Pantalla de Feedback (Preguntas) -->
+        <!-- Feedback Screen (Questions) -->
         <div id="screen-feedback" class="hidden">
-            <h2 class="text-2xl font-bold mb-6 text-center">Registro de Esfuerzo</h2>
+            <h2 class="text-2xl font-bold mb-6 text-center">Effort Registration</h2>
             <div class="space-y-6">
                 <div>
-                    <label class="block text-sm text-slate-400 mb-2">Frecuencia Cardíaca (BPM)</label>
-                    <input type="number" id="input-hr" placeholder="Ej: 145" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none">
+                    <label class="block text-sm text-slate-400 mb-2">Heart Rate (BPM)</label>
+                    <input type="number" id="input-hr" placeholder="e.g.: 145" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
                 <div>
-                    <label class="block text-sm text-slate-400 mb-2">Nivel de Dificultad (1-10)</label>
+                    <label class="block text-sm text-slate-400 mb-2">Difficulty Level (1-10)</label>
                     <input type="range" id="input-difficulty" min="1" max="10" class="w-full accent-blue-500">
                     <div class="flex justify-between text-xs text-slate-500 px-1 mt-1">
-                        <span>Fácil</span><span>Medio</span><span>Extremo</span>
+                        <span>Easy</span><span>Medium</span><span>Extreme</span>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm text-slate-400 mb-2">Notas / Sensaciones</label>
-                    <textarea id="input-notes" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="¿Cómo te sentiste?"></textarea>
+                    <label class="block text-sm text-slate-400 mb-2">Notes / Sensations</label>
+                    <textarea id="input-notes" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="How did you feel?"></textarea>
                 </div>
                 <button onclick="saveFeedback()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-bold transition-all">
-                    SIGUIENTE PASO
+                    NEXT STEP
                 </button>
             </div>
         </div>
 
-        <!-- Pantalla de Elongación -->
+        <!-- Stretching Screen -->
         <div id="screen-stretching" class="hidden text-center">
-            <h2 class="text-2xl font-bold mb-4">Fase de Elongación</h2>
-            <p class="text-slate-400 mb-6 text-sm">Tómate tu tiempo para recuperar.</p>
+            <h2 class="text-2xl font-bold mb-4">Stretching Phase</h2>
+            <p class="text-slate-400 mb-6 text-sm">Take your time to recover.</p>
             <div class="aspect-video bg-black rounded-2xl mb-8 overflow-hidden">
                 <iframe id="stretch-video" class="w-full h-full" src="" frameborder="0" allowfullscreen></iframe>
             </div>
             <button onclick="goToCardio()" class="w-full py-4 bg-orange-600 hover:bg-orange-500 rounded-2xl font-bold transition-all">
-                IR A CARDIO FINAL (15 MIN)
+                GO TO FINAL CARDIO (15 MIN)
             </button>
         </div>
 
-        <!-- Pantalla de Cardio (Treadmill) -->
+        <!-- Cardio Screen (Treadmill) -->
         <div id="screen-cardio" class="hidden text-center">
-            <h2 class="text-2xl font-bold mb-2">Cardio: Zonas 3-4</h2>
+            <h2 class="text-2xl font-bold mb-2">Cardio: Zones 3-4</h2>
             <div class="flex justify-center gap-4 mb-4">
-                <div class="px-3 py-1 bg-orange-900/30 text-orange-400 rounded-lg text-xs font-bold border border-orange-800/50">Intervalos 30s</div>
-                <div id="cardio-zone-indicator" class="px-3 py-1 bg-red-900/30 text-red-400 rounded-lg text-xs font-bold border border-red-800/50">Zona 4</div>
+                <div class="px-3 py-1 bg-orange-900/30 text-orange-400 rounded-lg text-xs font-bold border border-orange-800/50">30s Intervals</div>
+                <div id="cardio-zone-indicator" class="px-3 py-1 bg-red-900/30 text-red-400 rounded-lg text-xs font-bold border border-red-800/50">Zone 4</div>
             </div>
 
             <div class="bg-slate-800/50 p-6 rounded-3xl mb-6 border border-slate-700">
                 <div class="text-7xl font-mono font-bold text-blue-400 mb-2" id="cardio-timer">15:00</div>
-                <p id="cardio-instruction" class="text-lg font-semibold text-white">¡Inicia en Zona 3!</p>
-                <p class="text-sm text-slate-400 mt-2 italic">Ajusta velocidad o inclinación para controlar pulso</p>
+                <p id="cardio-instruction" class="text-lg font-semibold text-white">Start at Zone 3!</p>
+                <p class="text-sm text-slate-400 mt-2 italic">Adjust speed or incline to control heart rate</p>
             </div>
 
             <div id="cardio-progress-container" class="w-full h-3 bg-slate-700 rounded-full mb-8 overflow-hidden">
@@ -130,34 +130,34 @@
 
             <div class="grid grid-cols-2 gap-4 text-left">
                 <div class="p-3 bg-slate-800 rounded-xl border border-slate-700">
-                    <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Estrategia</p>
-                    <p class="text-xs text-slate-300">Sube inclinación si la velocidad es muy alta.</p>
+                    <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Strategy</p>
+                    <p class="text-xs text-slate-300">Increase incline if speed is too high.</p>
                 </div>
                 <div class="p-3 bg-slate-800 rounded-xl border border-slate-700">
-                    <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Próximo</p>
-                    <p id="cardio-next" class="text-xs text-slate-300">Mantener Zona</p>
+                    <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Next</p>
+                    <p id="cardio-next" class="text-xs text-slate-300">Maintain Zone</p>
                 </div>
             </div>
         </div>
 
-        <!-- Pantalla de Finalización y Envío por WhatsApp -->
+        <!-- Completion and WhatsApp Sending Screen -->
         <div id="screen-finish" class="hidden text-center">
-            <h2 class="text-2xl font-bold mb-4 text-emerald-400">✅ ¡ENTRENAMIENTO COMPLETADO!</h2>
-            <p class="text-slate-400 mb-6">Presiona el botón para enviar el reporte por WhatsApp</p>
+            <h2 class="text-2xl font-bold mb-4 text-emerald-400">✅ TRAINING COMPLETED!</h2>
+            <p class="text-slate-400 mb-6">Press the button to send the report via WhatsApp</p>
             
             <div id="summary-data" class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 mb-6 text-left text-sm space-y-2">
-                <p><span class="text-slate-500">Fecha:</span> <span id="summary-date" class="font-semibold"></span></p>
-                <p><span class="text-slate-500">Ejercicios completados:</span> <span id="summary-exercises" class="font-semibold text-blue-400">8</span></p>
-                <p><span class="text-slate-500">Puntuación promedio:</span> <span id="summary-avg-difficulty" class="font-semibold text-orange-400">7.5/10</span></p>
-                <p><span class="text-slate-500">HR promedio:</span> <span id="summary-avg-hr" class="font-semibold text-red-400">145 BPM</span></p>
+                <p><span class="text-slate-500">Date:</span> <span id="summary-date" class="font-semibold"></span></p>
+                <p><span class="text-slate-500">Exercises completed:</span> <span id="summary-exercises" class="font-semibold text-blue-400">8</span></p>
+                <p><span class="text-slate-500">Average score:</span> <span id="summary-avg-difficulty" class="font-semibold text-orange-400">7.5/10</span></p>
+                <p><span class="text-slate-500">Average HR:</span> <span id="summary-avg-hr" class="font-semibold text-red-400">145 BPM</span></p>
             </div>
 
             <button onclick="sendViaWhatsApp()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-bold text-xl transition-all shadow-lg shadow-emerald-900/20 mb-3 flex items-center justify-center gap-2">
-                📱 ENVIAR POR WHATSAPP
+                📱 SEND VIA WHATSAPP
             </button>
             
             <button onclick="downloadReport()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-2xl font-semibold transition-all">
-                📄 DESCARGAR REPORTE
+                📄 DOWNLOAD REPORT
             </button>
         </div>
     </div>
@@ -165,10 +165,10 @@
     <script>
         // CONFIGURACIÓN DE EJERCICIOS (REEMPLAZA LOS IDs DE YOUTUBE)
         const ejercicios = [
-            { id: 1, nombre: "Sentadillas / Goblet Squat", videoUrl: "./media/1.mp4" },
-            { id: 2, nombre: "Incline Push-up", videoUrl: "./media/2.mp4" },
-            { id: 3, nombre: "Romanian Deadlift", videoUrl: "./media/3.mp4" },
-            { id: 4, nombre: "Thruster", videoUrl: "./media/4.mp4" }
+            { id: 1, nombre: "Squats / Goblet Squat", videoUrl: "1.mp4" },
+            { id: 2, nombre: "Incline Push-up", videoUrl: "2.mp4" },
+            { id: 3, nombre: "Romanian Deadlift", videoUrl: "3.mp4" },
+            { id: 4, nombre: "Thruster", videoUrl: "4.mp4" }
         ];
 
         const videoElongacionId = "IjH_8pdybfs"; 
@@ -179,7 +179,37 @@
         let cardioInterval;
         let cardioTimeLeft = 15 * 60;
         let sessionData = [];
-        let phoneNumber = ""; // Se solicitará al usuario
+        let phoneNumber = ""; // Will be requested from user
+        let wakeLock = null; // Screen Wake Lock
+
+        // Request screen to stay on during training
+        async function requestWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    console.log('Screen wake lock activated');
+                }
+            } catch (err) {
+                console.log('Wake lock error: ' + err.message);
+            }
+        }
+
+        // Release screen lock
+        function releaseWakeLock() {
+            if (wakeLock !== null) {
+                wakeLock.release().then(() => {
+                    wakeLock = null;
+                    console.log('Screen wake lock released');
+                }).catch(err => console.log('Error releasing wake lock: ' + err.message));
+            }
+        }
+
+        // Re-acquire wake lock if document becomes visible
+        document.addEventListener('visibilitychange', async () => {
+            if (wakeLock !== null && document.visibilityState === 'visible') {
+                await requestWakeLock();
+            }
+        });
 
         // Función para generar un sonido de alerta
         function playBeep() {
@@ -200,7 +230,7 @@
                 oscillator.start(audioContext.currentTime);
                 oscillator.stop(audioContext.currentTime + 0.5);
             } catch (e) {
-                console.log('Audio no disponible');
+                console.log('Audio not available');
             }
         }
 
@@ -212,6 +242,7 @@
         function startTraining() {
             currentRound = 1;
             currentExerciseIdx = 0;
+            requestWakeLock(); // Keep screen on
             runExerciseCycle();
         }
 
@@ -219,7 +250,7 @@
             showScreen('timer');
             const exercise = ejercicios[currentExerciseIdx];
             document.getElementById('exercise-name').innerText = exercise.nombre;
-            document.getElementById('round-indicator').innerText = `Ronda ${currentRound}`;
+            document.getElementById('round-indicator').innerText = `Round ${currentRound}`;
             
             // Detectar si es un archivo local o YouTube
             if (exercise.videoUrl.includes('.mp4') || exercise.videoUrl.includes('.webm')) {
@@ -230,7 +261,7 @@
                 document.getElementById('video-container').innerHTML = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${exercise.videoUrl}?autoplay=1&mute=1" frameborder="0" allowfullscreen></iframe>`;
             }
             
-            startTimer(30, "Preparación", () => {
+            startTimer(30, "Preparation", () => {
                 startTimer(20, "¡EJERCICIO!", () => {
                     showScreen('feedback');
                 });
@@ -299,6 +330,7 @@
 
         function showFinishScreen() {
             showScreen('finish');
+            releaseWakeLock(); // Release screen lock when done
             
             // Calcular estadísticas
             const avgDifficulty = (sessionData.reduce((a, b) => a + parseInt(b.difficulty), 0) / sessionData.length).toFixed(1);
@@ -311,34 +343,34 @@
         }
 
         function sendViaWhatsApp() {
-            phoneNumber = "17133844263"; // Número del terapeuta
+            phoneNumber = "17133844263"; // Therapist's number
 
-            // Crear mensaje con datos del entrenamiento
-            let mensaje = `📋 *REPORTE DE ENTRENAMIENTO*\n\n`;
-            mensaje += `📅 Fecha: ${new Date().toLocaleDateString('es-AR')}\n`;
-            mensaje += `⏰ Hora: ${new Date().toLocaleTimeString('es-AR')}\n\n`;
-            mensaje += `*RESUMEN:*\n`;
-            mensaje += `✅ Ejercicios completados: ${sessionData.length}\n`;
-            mensaje += `💪 Dificultad promedio: ${(sessionData.reduce((a, b) => a + parseInt(b.difficulty), 0) / sessionData.length).toFixed(1)}/10\n`;
-            mensaje += `❤️ HR promedio: ${Math.round(sessionData.reduce((a, b) => a + parseInt(b.hr || 0), 0) / sessionData.filter(d => d.hr).length)} BPM\n\n`;
+            // Create message with training data
+            let mensaje = `📋 *TRAINING REPORT*\n\n`;
+            mensaje += `📅 Date: ${new Date().toLocaleDateString('en-US')}\n`;
+            mensaje += `⏰ Time: ${new Date().toLocaleTimeString('en-US')}\n\n`;
+            mensaje += `*SUMMARY:*\n`;
+            mensaje += `✅ Exercises completed: ${sessionData.length}\n`;
+            mensaje += `💪 Average difficulty: ${(sessionData.reduce((a, b) => a + parseInt(b.difficulty), 0) / sessionData.length).toFixed(1)}/10\n`;
+            mensaje += `❤️ Average HR: ${Math.round(sessionData.reduce((a, b) => a + parseInt(b.hr || 0), 0) / sessionData.filter(d => d.hr).length)} BPM\n\n`;
             
-            mensaje += `*DETALLE POR EJERCICIO:*\n`;
+            mensaje += `*EXERCISE DETAILS:*\n`;
             sessionData.forEach((item, idx) => {
-                mensaje += `${idx + 1}. ${item.ejercicio} (Ronda ${item.ronda})\n`;
-                mensaje += `   • HR: ${item.hr || 'No registrado'} BPM\n`;
-                mensaje += `   • Dificultad: ${item.difficulty}/10\n`;
-                if (item.notes) mensaje += `   • Nota: ${item.notes}\n`;
+                mensaje += `${idx + 1}. ${item.ejercicio} (Round ${item.ronda})\n`;
+                mensaje += `   • HR: ${item.hr || 'Not recorded'} BPM\n`;
+                mensaje += `   • Difficulty: ${item.difficulty}/10\n`;
+                if (item.notes) mensaje += `   • Note: ${item.notes}\n`;
             });
             
-            mensaje += `\n📱 Enviado desde ClinicFit`;
+            mensaje += `\n📱 Sent from ClinicFit`;
 
-            // Crear enlace de WhatsApp
+            // Create WhatsApp link
             const urlWhatsApp = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensaje)}`;
             window.open(urlWhatsApp, '_blank');
         }
 
         function downloadReport() {
-            let csv = "Ronda,Ejercicio,HR,Dificultad,Notas\n";
+            let csv = "Round,Exercise,HR,Difficulty,Notes\n";
             sessionData.forEach(item => {
                 csv += `${item.ronda},"${item.ejercicio}",${item.hr},${item.difficulty},"${item.notes}"\n`;
             });
@@ -346,7 +378,7 @@
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `Entrenamiento_${new Date().toISOString().split('T')[0]}.csv`;
+            link.download = `Training_${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
         }
 
@@ -379,30 +411,30 @@
                 progressEl.style.width = `${progress}%`;
 
                 if (cardioTimeLeft <= coolDownStart) {
-                    instructionEl.innerText = "COOL DOWN: Baja a Zona 2";
-                    zoneInd.innerText = "ZONA 2";
+                    instructionEl.innerText = "COOL DOWN: Lower to Zone 2";
+                    zoneInd.innerText = "ZONE 2";
                     zoneInd.className = "px-3 py-1 bg-emerald-900/30 text-emerald-400 rounded-lg text-xs font-bold border border-emerald-800/50";
                 } else {
-                    // Ciclo de 1.5 min para lograr 60% Z3 (2 periodos Z3 de 30s, 1 periodo Z4 de 30s)
+                    // Cycle of 1.5 min to achieve 60% Z3 (2 periods Z3 of 30s, 1 period Z4 of 30s)
                     const cycle = Math.floor(cardioTimeLeft / 30) % 3; 
                     
                     if (cycle === 0) { 
-                        instructionEl.innerText = "INTENSIDAD ALTA: Zona 4";
-                        zoneInd.innerText = "ZONA 4";
+                        instructionEl.innerText = "HIGH INTENSITY: Zone 4";
+                        zoneInd.innerText = "ZONE 4";
                         zoneInd.className = "px-3 py-1 bg-red-900/30 text-red-400 rounded-lg text-xs font-bold border border-red-800/50";
                     } else {
-                        instructionEl.innerText = "ESTABLE: Zona 3";
-                        zoneInd.innerText = "ZONA 3";
+                        instructionEl.innerText = "STEADY: Zone 3";
+                        zoneInd.innerText = "ZONE 3";
                         zoneInd.className = "px-3 py-1 bg-orange-900/30 text-orange-400 rounded-lg text-xs font-bold border border-orange-800/50";
                     }
                 }
 
                 if (cardioTimeLeft <= 0) {
                     clearInterval(cardioInterval);
-                    timerEl.innerText = "FIN";
-                    instructionEl.innerText = "¡Excelente trabajo!";
+                    timerEl.innerText = "DONE";
+                    instructionEl.innerText = "Excellent work!";
                     
-                    // Mostrar pantalla de finalización después de 2 segundos
+                    // Show finish screen after 2 seconds
                     setTimeout(() => {
                         showFinishScreen();
                     }, 2000);
