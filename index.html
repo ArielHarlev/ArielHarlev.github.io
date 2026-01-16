@@ -168,11 +168,11 @@
                 <div class="p-4 bg-slate-800 rounded-xl border border-slate-700">
                     <p class="text-[10px] text-slate-500 uppercase font-bold mb-2">⏱️ Time Breakdown</p>
                     <ul class="text-xs text-slate-300 space-y-1">
-                        <li>Min 0-3: 60-80 BPM (Warm-up)</li>
-                        <li>Min 3-7: 150-155 BPM (High intensity)</li>
-                        <li>Min 7-10: 140-150 BPM (Moderate intensity)</li>
-                        <li>Min 10-12: 150-155 BPM (High intensity)</li>
-                        <li>Min 12-15: &lt;100 BPM (Cool down)</li>
+                        <li>Min 15:00 a 12:00: 60-80 BPM (Warm-up)</li>
+                        <li>Min 12:00 a 10:00: 150-155 BPM (High intensity)</li>
+                        <li>Min 10:00 a 07:00: 140-150 BPM (Moderate intensity)</li>
+                        <li>Min 07:00 a 03:00: 150-155 BPM (High intensity)</li>
+                        <li>Min 03:00 a 00:00: &lt;100 BPM (Cool down)</li>
                     </ul>
                 </div>
             </div>
@@ -472,31 +472,33 @@
                 const progress = ((totalDuration - cardioTimeLeft) / totalDuration) * 100;
                 progressEl.style.width = `${progress}%`;
 
-                // Calculate elapsed time (15:00 - remaining = elapsed)
-                const elapsedMinutes = totalDuration / 60 - minutes;
-                
-                // Update BPM target and instruction based on elapsed time
-                if (elapsedMinutes >= 0 && elapsedMinutes < 3) {
+                // Based on remaining time (cardioTimeLeft)
+                if (cardioTimeLeft > 12 * 60) {
+                    // 15:00 to 12:00 - Warm-up
                     instructionEl.innerText = "🔵 WARM-UP ZONE";
                     bpmTargetEl.innerText = "60-80 BPM";
                     bpmTargetEl.className = "text-3xl font-bold text-blue-400 mt-2";
                     descriptionEl.innerText = "Start easy and gradually increase pace";
-                } else if (elapsedMinutes >= 3 && elapsedMinutes < 7) {
+                } else if (cardioTimeLeft > 8 * 60) {
+                    // 12:00 to 8:00 - High intensity
                     instructionEl.innerText = "🔴 HIGH INTENSITY";
                     bpmTargetEl.innerText = "150-155 BPM";
                     bpmTargetEl.className = "text-3xl font-bold text-red-400 mt-2";
                     descriptionEl.innerText = "Push hard - maintain high heart rate";
-                } else if (elapsedMinutes >= 7 && elapsedMinutes < 10) {
+                } else if (cardioTimeLeft > 5 * 60) {
+                    // 8:00 to 5:00 - Moderate intensity
                     instructionEl.innerText = "🟠 MODERATE INTENSITY";
                     bpmTargetEl.innerText = "140-150 BPM";
                     bpmTargetEl.className = "text-3xl font-bold text-orange-400 mt-2";
                     descriptionEl.innerText = "Maintain moderate but steady effort";
-                } else if (elapsedMinutes >= 10 && elapsedMinutes < 12) {
+                } else if (cardioTimeLeft > 3 * 60) {
+                    // 5:00 to 3:00 - High intensity
                     instructionEl.innerText = "🔴 HIGH INTENSITY";
                     bpmTargetEl.innerText = "150-155 BPM";
                     bpmTargetEl.className = "text-3xl font-bold text-red-400 mt-2";
                     descriptionEl.innerText = "Push hard again - final sprint zone";
-                } else if (elapsedMinutes >= 12 && elapsedMinutes < 15) {
+                } else if (cardioTimeLeft > 0) {
+                    // 3:00 to 0:00 - Cool down
                     instructionEl.innerText = "🟢 COOL DOWN";
                     bpmTargetEl.innerText = "< 100 BPM";
                     bpmTargetEl.className = "text-3xl font-bold text-emerald-400 mt-2";
