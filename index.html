@@ -63,9 +63,18 @@
                 </div>
             </div>
 
-            <button onclick="startTraining()" class="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold text-xl transition-all shadow-lg shadow-blue-900/20">
+            <button onclick="startTraining()" class="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold text-xl transition-all shadow-lg shadow-blue-900/20 mb-4">
                 START TRAINING
             </button>
+
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="quickStretching()" class="py-3 bg-orange-600 hover:bg-orange-500 rounded-2xl font-semibold transition-all">
+                    🧘 Quick Stretching
+                </button>
+                <button onclick="quickCardio()" class="py-3 bg-red-600 hover:bg-red-500 rounded-2xl font-semibold transition-all">
+                    🏃 Quick Cardio
+                </button>
+            </div>
         </div>
 
         <!-- Timer / Exercise Screen -->
@@ -92,6 +101,15 @@
             </div>
 
             <p id="next-instruction" class="text-slate-400 italic text-sm">Get ready to begin...</p>
+
+            <div class="grid grid-cols-2 gap-3 mt-8">
+                <button onclick="quickStretching()" class="py-2 bg-orange-600 hover:bg-orange-500 rounded-xl font-semibold text-sm transition-all">
+                    🧘 Stretching
+                </button>
+                <button onclick="quickCardio()" class="py-2 bg-red-600 hover:bg-red-500 rounded-xl font-semibold text-sm transition-all">
+                    🏃 Cardio
+                </button>
+            </div>
         </div>
 
         <!-- Feedback Screen (Questions) -->
@@ -149,7 +167,7 @@
                 <div id="cardio-progress-bar" class="h-full bg-blue-500 transition-all duration-1000" style="width: 0%"></div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 text-left">
+            <div class="grid grid-cols-2 gap-4 text-left mb-6">
                 <div class="p-3 bg-slate-800 rounded-xl border border-slate-700">
                     <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Strategy</p>
                     <p class="text-xs text-slate-300">Increase incline if speed is too high.</p>
@@ -159,6 +177,10 @@
                     <p id="cardio-next" class="text-xs text-slate-300">Maintain Zone</p>
                 </div>
             </div>
+
+            <button onclick="finishCardio()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-semibold transition-all">
+                ✓ Finish Cardio
+            </button>
         </div>
 
         <!-- Completion and WhatsApp Sending Screen -->
@@ -186,10 +208,10 @@
     <script>
         // CONFIGURACIÓN DE EJERCICIOS (REEMPLAZA LOS IDs DE YOUTUBE)
         const ejercicios = [
-            { id: 1, nombre: "Squats / Goblet Squat", videoUrl: "1.mp4" },
-            { id: 2, nombre: "Incline Push-up", videoUrl: "2.mp4" },
-            { id: 3, nombre: "Romanian Deadlift", videoUrl: "3.mp4" },
-            { id: 4, nombre: "Thruster", videoUrl: "4.mp4" }
+            { id: 1, nombre: "Squats / Goblet Squat", videoUrl: "./media/1.mp4" },
+            { id: 2, nombre: "Incline Push-up", videoUrl: "./media/2.mp4" },
+            { id: 3, nombre: "Romanian Deadlift", videoUrl: "./media/3.mp4" },
+            { id: 4, nombre: "Thruster", videoUrl: "./media/4.mp4" }
         ];
 
         const videoElongacionId = "IjH_8pdybfs"; 
@@ -417,6 +439,22 @@
             startCardioTimer();
         }
 
+        function quickStretching() {
+            cardioTimeLeft = 15 * 60; // Reset cardio timer
+            showStretching();
+        }
+
+        function quickCardio() {
+            cardioTimeLeft = 15 * 60; // Reset cardio timer
+            goToCardio();
+        }
+
+        function finishCardio() {
+            clearInterval(cardioInterval);
+            releaseWakeLock();
+            showFinishScreen();
+        }
+
         function startCardioTimer() {
             const timerEl = document.getElementById('cardio-timer');
             const instructionEl = document.getElementById('cardio-instruction');
@@ -470,4 +508,3 @@
     </script>
 </body>
 </html>
-
