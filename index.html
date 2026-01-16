@@ -151,30 +151,29 @@
 
         <!-- Cardio Screen (Treadmill) -->
         <div id="screen-cardio" class="hidden text-center">
-            <h2 class="text-2xl font-bold mb-2">Cardio: Zones 3-4</h2>
-            <div class="flex justify-center gap-4 mb-4">
-                <div class="px-3 py-1 bg-orange-900/30 text-orange-400 rounded-lg text-xs font-bold border border-orange-800/50">30s Intervals</div>
-                <div id="cardio-zone-indicator" class="px-3 py-1 bg-red-900/30 text-red-400 rounded-lg text-xs font-bold border border-red-800/50">Zone 4</div>
-            </div>
+            <h2 class="text-2xl font-bold mb-6">Cardio Session - Heart Rate Targets</h2>
 
             <div class="bg-slate-800/50 p-6 rounded-3xl mb-6 border border-slate-700">
                 <div class="text-7xl font-mono font-bold text-blue-400 mb-2" id="cardio-timer">15:00</div>
-                <p id="cardio-instruction" class="text-lg font-semibold text-white">Start at Zone 3!</p>
-                <p class="text-sm text-slate-400 mt-2 italic">Adjust speed or incline to control heart rate</p>
+                <p id="cardio-instruction" class="text-lg font-semibold text-white mt-4">Warm-up Zone</p>
+                <p id="cardio-bpm-target" class="text-3xl font-bold text-emerald-400 mt-2">60-80 BPM</p>
+                <p class="text-sm text-slate-400 mt-2 italic" id="cardio-description">Adjust speed or incline to reach target heart rate</p>
             </div>
 
-            <div id="cardio-progress-container" class="w-full h-3 bg-slate-700 rounded-full mb-8 overflow-hidden">
+            <div id="cardio-progress-container" class="w-full h-3 bg-slate-700 rounded-full mb-6 overflow-hidden">
                 <div id="cardio-progress-bar" class="h-full bg-blue-500 transition-all duration-1000" style="width: 0%"></div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 text-left mb-6">
-                <div class="p-3 bg-slate-800 rounded-xl border border-slate-700">
-                    <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Strategy</p>
-                    <p class="text-xs text-slate-300">Increase incline if speed is too high.</p>
-                </div>
-                <div class="p-3 bg-slate-800 rounded-xl border border-slate-700">
-                    <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Next</p>
-                    <p id="cardio-next" class="text-xs text-slate-300">Maintain Zone</p>
+            <div class="grid grid-cols-1 gap-4 text-left mb-6">
+                <div class="p-4 bg-slate-800 rounded-xl border border-slate-700">
+                    <p class="text-[10px] text-slate-500 uppercase font-bold mb-2">⏱️ Time Breakdown</p>
+                    <ul class="text-xs text-slate-300 space-y-1">
+                        <li>Min 0-3: 60-80 BPM (Warm-up)</li>
+                        <li>Min 3-7: 150-155 BPM (High intensity)</li>
+                        <li>Min 7-10: 140-150 BPM (Moderate intensity)</li>
+                        <li>Min 10-12: 150-155 BPM (High intensity)</li>
+                        <li>Min 12-15: &lt;100 BPM (Cool down)</li>
+                    </ul>
                 </div>
             </div>
 
@@ -208,10 +207,10 @@
     <script>
         // CONFIGURACIÓN DE EJERCICIOS (REEMPLAZA LOS IDs DE YOUTUBE)
         const ejercicios = [
-            { id: 1, nombre: "Squats / Goblet Squat", videoUrl: "./media/1.mp4" },
-            { id: 2, nombre: "Incline Push-up", videoUrl: "./media/2.mp4" },
-            { id: 3, nombre: "Romanian Deadlift", videoUrl: "./media/3.mp4" },
-            { id: 4, nombre: "Thruster", videoUrl: "./media/4.mp4" }
+            { id: 1, nombre: "Squats / Goblet Squat", videoUrl: "1.mp4" },
+            { id: 2, nombre: "Incline Push-up", videoUrl: "2.mp4" },
+            { id: 3, nombre: "Romanian Deadlift", videoUrl: "3.mp4" },
+            { id: 4, nombre: "Thruster", videoUrl: "4.mp4" }
         ];
 
         const videoElongacionId = "IjH_8pdybfs"; 
@@ -458,11 +457,11 @@
         function startCardioTimer() {
             const timerEl = document.getElementById('cardio-timer');
             const instructionEl = document.getElementById('cardio-instruction');
-            const zoneInd = document.getElementById('cardio-zone-indicator');
+            const bpmTargetEl = document.getElementById('cardio-bpm-target');
+            const descriptionEl = document.getElementById('cardio-description');
             const progressEl = document.getElementById('cardio-progress-bar');
             
             const totalDuration = 15 * 60;
-            const coolDownStart = 5 * 60; 
 
             clearInterval(cardioInterval);
             cardioInterval = setInterval(() => {
@@ -473,29 +472,43 @@
                 const progress = ((totalDuration - cardioTimeLeft) / totalDuration) * 100;
                 progressEl.style.width = `${progress}%`;
 
-                if (cardioTimeLeft <= coolDownStart) {
-                    instructionEl.innerText = "COOL DOWN: Lower to Zone 2";
-                    zoneInd.innerText = "ZONE 2";
-                    zoneInd.className = "px-3 py-1 bg-emerald-900/30 text-emerald-400 rounded-lg text-xs font-bold border border-emerald-800/50";
-                } else {
-                    // Cycle of 1.5 min to achieve 60% Z3 (2 periods Z3 of 30s, 1 period Z4 of 30s)
-                    const cycle = Math.floor(cardioTimeLeft / 30) % 3; 
-                    
-                    if (cycle === 0) { 
-                        instructionEl.innerText = "HIGH INTENSITY: Zone 4";
-                        zoneInd.innerText = "ZONE 4";
-                        zoneInd.className = "px-3 py-1 bg-red-900/30 text-red-400 rounded-lg text-xs font-bold border border-red-800/50";
-                    } else {
-                        instructionEl.innerText = "STEADY: Zone 3";
-                        zoneInd.innerText = "ZONE 3";
-                        zoneInd.className = "px-3 py-1 bg-orange-900/30 text-orange-400 rounded-lg text-xs font-bold border border-orange-800/50";
-                    }
+                // Calculate elapsed time (15:00 - remaining = elapsed)
+                const elapsedMinutes = totalDuration / 60 - minutes;
+                
+                // Update BPM target and instruction based on elapsed time
+                if (elapsedMinutes >= 0 && elapsedMinutes < 3) {
+                    instructionEl.innerText = "🔵 WARM-UP ZONE";
+                    bpmTargetEl.innerText = "60-80 BPM";
+                    bpmTargetEl.className = "text-3xl font-bold text-blue-400 mt-2";
+                    descriptionEl.innerText = "Start easy and gradually increase pace";
+                } else if (elapsedMinutes >= 3 && elapsedMinutes < 7) {
+                    instructionEl.innerText = "🔴 HIGH INTENSITY";
+                    bpmTargetEl.innerText = "150-155 BPM";
+                    bpmTargetEl.className = "text-3xl font-bold text-red-400 mt-2";
+                    descriptionEl.innerText = "Push hard - maintain high heart rate";
+                } else if (elapsedMinutes >= 7 && elapsedMinutes < 10) {
+                    instructionEl.innerText = "🟠 MODERATE INTENSITY";
+                    bpmTargetEl.innerText = "140-150 BPM";
+                    bpmTargetEl.className = "text-3xl font-bold text-orange-400 mt-2";
+                    descriptionEl.innerText = "Maintain moderate but steady effort";
+                } else if (elapsedMinutes >= 10 && elapsedMinutes < 12) {
+                    instructionEl.innerText = "🔴 HIGH INTENSITY";
+                    bpmTargetEl.innerText = "150-155 BPM";
+                    bpmTargetEl.className = "text-3xl font-bold text-red-400 mt-2";
+                    descriptionEl.innerText = "Push hard again - final sprint zone";
+                } else if (elapsedMinutes >= 12 && elapsedMinutes < 15) {
+                    instructionEl.innerText = "🟢 COOL DOWN";
+                    bpmTargetEl.innerText = "< 100 BPM";
+                    bpmTargetEl.className = "text-3xl font-bold text-emerald-400 mt-2";
+                    descriptionEl.innerText = "Bring heart rate down gradually";
                 }
 
                 if (cardioTimeLeft <= 0) {
                     clearInterval(cardioInterval);
                     timerEl.innerText = "DONE";
                     instructionEl.innerText = "Excellent work!";
+                    bpmTargetEl.innerText = "✅ COMPLETED";
+                    bpmTargetEl.className = "text-3xl font-bold text-emerald-400 mt-2";
                     
                     // Show finish screen after 2 seconds
                     setTimeout(() => {
